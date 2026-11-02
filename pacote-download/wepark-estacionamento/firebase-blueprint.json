@@ -1,0 +1,133 @@
+{
+  "entities": {
+    "Operator": {
+      "title": "Operator",
+      "description": "Parking booth attendant or supervisor with credentials",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "maxLength": 100 },
+        "matricula": { "type": "string", "maxLength": 20 },
+        "cpf": { "type": "string", "maxLength": 20 },
+        "role": { "type": "string", "enum": ["operador", "supervisor", "gerente"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "name", "matricula", "cpf", "role"]
+    },
+    "Ticket": {
+      "title": "Ticket",
+      "description": "Parking ticket for parked, paid or lost-ticket vehicle records",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "ticketNumber": { "type": "string", "maxLength": 30 },
+        "plate": { "type": "string", "maxLength": 15 },
+        "vehicleType": { "type": "string", "enum": ["carro", "moto", "caminhao"] },
+        "modelDescription": { "type": "string", "maxLength": 100 },
+        "entryTime": { "type": "string" },
+        "exitTime": { "type": "string" },
+        "status": { "type": "string", "enum": ["patio", "pago_liberado", "perda_regularizada", "cancelado"] },
+        "durationMinutes": { "type": "number" },
+        "isOvernight": { "type": "boolean" },
+        "regularPrice": { "type": "number" },
+        "administrativeFee": { "type": "number" },
+        "totalPaid": { "type": "number" },
+        "paymentMethod": { "type": "string" },
+        "amountTendered": { "type": "number" },
+        "changeGiven": { "type": "number" },
+        "isLostTicketException": { "type": "boolean" },
+        "driverName": { "type": "string", "maxLength": 100 },
+        "driverCpf": { "type": "string", "maxLength": 20 },
+        "driverPhone": { "type": "string", "maxLength": 25 },
+        "isMonthly": { "type": "boolean" },
+        "operatorId": { "type": "string" },
+        "operatorName": { "type": "string" },
+        "shiftType": { "type": "string" }
+      },
+      "required": ["id", "ticketNumber", "plate", "vehicleType", "entryTime", "status", "operatorId", "operatorName", "shiftType"]
+    },
+    "MonthlyCustomer": {
+      "title": "MonthlyCustomer",
+      "description": "Recurring monthly parking subscriber",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "maxLength": 100 },
+        "cpf": { "type": "string", "maxLength": 20 },
+        "phone": { "type": "string", "maxLength": 25 },
+        "plate": { "type": "string", "maxLength": 15 },
+        "vehicleType": { "type": "string", "enum": ["carro", "moto", "caminhao"] },
+        "modelDescription": { "type": "string", "maxLength": 100 },
+        "monthlyFee": { "type": "number" },
+        "dueDay": { "type": "number" },
+        "status": { "type": "string", "enum": ["ativo", "inadimplente", "bloqueado"] },
+        "lastPaymentDate": { "type": "string" },
+        "notes": { "type": "string", "maxLength": 200 }
+      },
+      "required": ["id", "name", "cpf", "plate", "vehicleType", "monthlyFee", "dueDay", "status"]
+    },
+    "PricingSettings": {
+      "title": "PricingSettings",
+      "description": "Parking tariff table and spot capacity configuration",
+      "type": "object",
+      "properties": {
+        "toleranceMinutes": { "type": "number" },
+        "firstHourCar": { "type": "number" },
+        "fractionCar": { "type": "number" },
+        "firstHourMoto": { "type": "number" },
+        "fractionMoto": { "type": "number" },
+        "firstHourTruck": { "type": "number" },
+        "fractionTruck": { "type": "number" },
+        "overnightRate": { "type": "number" },
+        "dailyRate": { "type": "number" },
+        "lostTicketAdminFee": { "type": "number" },
+        "capacityCar": { "type": "number" },
+        "capacityMoto": { "type": "number" },
+        "capacityTruck": { "type": "number" }
+      },
+      "required": ["toleranceMinutes", "firstHourCar", "fractionCar", "overnightRate", "lostTicketAdminFee"]
+    },
+    "Shift": {
+      "title": "Shift",
+      "description": "Operator shift and cash reconciliation audit record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "shiftType": { "type": "string" },
+        "operatorId": { "type": "string" },
+        "operatorName": { "type": "string" },
+        "openedAt": { "type": "string" },
+        "closedAt": { "type": "string" },
+        "initialFund": { "type": "number" },
+        "status": { "type": "string", "enum": ["aberto", "fechado"] },
+        "totalGrossRevenue": { "type": "number" },
+        "countedCash": { "type": "number" },
+        "divergence": { "type": "number" },
+        "notes": { "type": "string", "maxLength": 500 }
+      },
+      "required": ["id", "shiftType", "operatorId", "operatorName", "openedAt", "initialFund", "status"]
+    }
+  },
+  "firestore": {
+    "/operators/{operatorId}": {
+      "schema": { "$ref": "#/entities/Operator" },
+      "description": "Registered operators authorized to operate the booth"
+    },
+    "/tickets/{ticketId}": {
+      "schema": { "$ref": "#/entities/Ticket" },
+      "description": "Active and completed parking tickets for real-time yard sync"
+    },
+    "/monthly_customers/{customerId}": {
+      "schema": { "$ref": "#/entities/MonthlyCustomer" },
+      "description": "Registered monthly subscribers with payment and block status"
+    },
+    "/settings/{settingId}": {
+      "schema": { "$ref": "#/entities/PricingSettings" },
+      "description": "Global parking rates and yard capacity configuration"
+    },
+    "/shifts/{shiftId}": {
+      "schema": { "$ref": "#/entities/Shift" },
+      "description": "Operator work shifts and cash audit closures"
+    }
+  }
+}

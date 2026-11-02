@@ -1,0 +1,38 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128;
+    }
+
+    // Operators collection
+    match /operators/{operatorId} {
+      allow read: if true;
+      allow write: if isValidId(operatorId);
+    }
+
+    // Tickets collection (active and history)
+    match /tickets/{ticketId} {
+      allow read: if true;
+      allow write: if isValidId(ticketId);
+    }
+
+    // Monthly customers
+    match /monthly_customers/{customerId} {
+      allow read: if true;
+      allow write: if isValidId(customerId);
+    }
+
+    // Settings (tariffs and capacity)
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isValidId(settingId);
+    }
+
+    // Shifts (operator cash and closing reports)
+    match /shifts/{shiftId} {
+      allow read: if true;
+      allow write: if isValidId(shiftId);
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "WePark Estacionamento",
+  "description": "Sistema completo de gestão de guarita e retaguarda para estacionamento com controle tarifário, mensalistas, auditoria de caixa e exceções.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
